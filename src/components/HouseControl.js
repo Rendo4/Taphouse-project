@@ -63,13 +63,14 @@ class HouseControl extends React.Component {
       masterKegList: editedMasterKegList,
       editing: false,
       selectedKeg: null
-    })
+    });
   }
+
   render(){
     let currentlyVisibleState = null;
     let buttonText = null;
     if (this.state.editing ) {
-      currentlyVisibleState = <EditKegForm keg = {this.state.selectedKeg} />
+      currentlyVisibleState = <EditKegForm keg = {this.state.selectedKeg}  onEditTicket = {this.handleEditingKegInList} />
       buttonText = "Return to Tap List";
     } else if (this.state.selectedKeg != null) {
       currentlyVisibleState = <KegDetail keg = {this.state.selectedKeg} onClickingDelete = {this.handleDeletingKeg} onClickingEdit = {this.handleEditClick} />
