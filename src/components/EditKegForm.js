@@ -2,14 +2,6 @@ import React from "react";
 import ReusableForm from "./ReusableForm";
 import PropTypes from "prop-types";
 
-function EditKegForm (props) {
-  return (
-    <React.Fragment>
-      <ReusableForm
-      buttonText="Update Keg" />
-    </React.Fragment>
-  );
-}
 
 function EditNewKeg(props){
   const { keg } = props;
@@ -22,8 +14,8 @@ function EditNewKeg(props){
       price: event.target.price.value,
        alchol: event.target.alchol.value, 
        id: keg.id
-    });
-  }
+      });
+    }
     return (
       <React.Fragment>
         <ReusableForm
@@ -33,8 +25,8 @@ function EditNewKeg(props){
       );
   }
 
-EditKegForm.propTypes = {
+EditNewKeg.propTypes = {
   onEditKeg: PropTypes.func
 };
 
-export default EditKegForm;
+export default EditNewKeg;

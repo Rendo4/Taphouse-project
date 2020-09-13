@@ -2,7 +2,7 @@ import React from 'react';
 import NewKegForm from './NewKegForm';
 import KegList from './KegList';
 import KegDetail from './KegDetail';
-import EditKegForm from './EditKegForm';
+import EditNewKeg from './EditKegForm';
 
 class HouseControl extends React.Component {
 
@@ -70,7 +70,7 @@ class HouseControl extends React.Component {
     let currentlyVisibleState = null;
     let buttonText = null;
     if (this.state.editing ) {
-      currentlyVisibleState = <EditKegForm keg = {this.state.selectedKeg}  onEditTicket = {this.handleEditingKegInList} />
+      currentlyVisibleState = <EditNewKeg keg = {this.state.selectedKeg}  onEditKeg = {this.handleEditingKegInList} />
       buttonText = "Return to Tap List";
     } else if (this.state.selectedKeg != null) {
       currentlyVisibleState = <KegDetail keg = {this.state.selectedKeg} onClickingDelete = {this.handleDeletingKeg} onClickingEdit = {this.handleEditClick} />
