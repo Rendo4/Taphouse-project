@@ -9,7 +9,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 ## Description
 
 _This project allows a user to add kegs to a list. Takes input of the name, brand, price, and alchol content. It creates a new instance of it and adds it to the list. The user can edit their entry or delete the keg all together. _
-![Tree](Tree.png)
+![Tree](Tree.png) 
 
 ## Available Scripts
 

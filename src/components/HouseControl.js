@@ -3,64 +3,82 @@ import NewKegForm from './NewKegForm';
 import KegList from './KegList';
 import KegDetail from './KegDetail';
 import EditNewKeg from './EditKegForm';
+import { connect } from 'react-redux';
+import PropTypes from "prop-types";
+import * as a from "./../actions";
 
 class HouseControl extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      formVisibleOnPage: false,
-      masterKegList: [],
       selectedKeg: null,
       editing: false
     };
   }
 
+  componentDidMount() {
+    this.waitTimeUpdateTimer = setInterval(() =>
+    this.updatKegElapsedWaitTime(),
+    6000
+    );
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.waitTimeUpdateTimer);
+  }
+
+  updateKegElapsedWaitTime = () => {
+    const { dispatch } = this.props;
+    Object.values(this.props.masterKegList).forEach(keg => {
+      const newFormattedWaitTime = keg.timeOpen.fromNow(true);
+      const action = a.updateTime(keg.id, newFormattedWaitTime);
+      dispatch(action);
+    });
+  }
+
   handleClick = () => {
     if (this.state.selectedKeg != null) {
       this.setState({
-        formVisibleOnPage: false,
         selectedKeg: null,
         editing: false
       });
     } else {
-      this.setState(prevState => ({
-        formVisibleOnPage: !prevState.formVisibleOnPage,
-      }));
+      const { dispatch } = this.props;
+      const action = a.toggleForm();
+      dispatch(action);
     }
   }
 
   handleAddingNewKegToList = (newKeg) => {
-    const newMasterKegList = this.state.masterKegList.concat(newKeg);
-    this.setState({
-      masterKegList: newMasterKegList,
-    formVisibleOnPage: false 
-    })
+    const { dispatch } = this.props;
+    const action = a.addKeg(newKeg)
+    dispatch(action);
+    const action2 = a.toggleForm();
+    dispatch(action2);
   }
 
   handleChangingSelectedKeg = (id) => {
-    const selectedKeg = this.state.masterKegList.filter(keg => keg.id === id)[0];
+    const selectedKeg = this.props.masterKegList[id];
     this.setState({selectedKeg: selectedKeg});
   }
 
   handleDeletingKeg = (id) => {
-    const newMasterKegList = this.state.masterKegList.filter(keg => keg.id !== id);
-    this.setState({
-      masterKegList: newMasterKegList,
-      selectedKeg: null
-    });
+    const { dispatch } = this.props;
+    const action = a.deleteKeg(id);
+    dispatch(action);
+    this.setState({selectedKeg: null});
   }
+
   handleEditClick = () => {
-    console.log("handleEditClick Reached!");
     this.setState({editing: true});
   }
 
   handleEditingKegInList = (kegToEdit) => {
-    const editedMasterKegList = this.state.masterKegList
-      .filter(keg => keg.id !== this.state.selectedKeg.id)
-      .concat(kegToEdit);
+    const { dispatch } = this.props;
+    const action = a.addKeg(kegToEdit);
+    dispatch(action);
     this.setState({
-      masterKegList: editedMasterKegList,
       editing: false,
       selectedKeg: null
     });
@@ -73,13 +91,17 @@ class HouseControl extends React.Component {
       currentlyVisibleState = <EditNewKeg keg = {this.state.selectedKeg}  onEditKeg = {this.handleEditingKegInList} />
       buttonText = "Return to Tap List";
     } else if (this.state.selectedKeg != null) {
-      currentlyVisibleState = <KegDetail keg = {this.state.selectedKeg} onClickingDelete = {this.handleDeletingKeg} onClickingEdit = {this.handleEditClick} />
+      currentlyVisibleState = 
+      <KegDetail 
+        keg = {this.state.selectedKeg} 
+        onClickingDelete = {this.handleDeletingKeg} 
+        onClickingEdit = {this.handleEditClick} />
       buttonText = "Return to Tap List";
-    } else if (this.state.formVisibleOnPage) { 
+    } else if (this.props.formVisibleOnPage) { 
       currentlyVisibleState = <NewKegForm onNewKegCreation={this.handleAddingNewKegToList} />
       buttonText = "Return to Tap List";
     } else {
-      currentlyVisibleState = <KegList kegList={this.state.masterKegList} onKegSelection={this.handleChangingSelectedKeg} />;
+      currentlyVisibleState = <KegList kegList={this.props.masterKegList} onKegSelection={this.handleChangingSelectedKeg} />;
       buttonText = "Add Keg";
     }
     return (
@@ -91,5 +113,18 @@ class HouseControl extends React.Component {
   }
 
 }
+
+HouseControl.propTypes = {
+  masterKegList: PropTypes.object
+};
+
+const mapStateToProps = state => {
+  return {
+    masterKegList: state.masterKegList,
+    formVisibleOnPage: state.formVisibleOnPage
+  }
+}
+
+HouseControl = connect(mapStateToProps)(HouseControl);
 
 export default HouseControl;
