@@ -17,26 +17,6 @@ class HouseControl extends React.Component {
     };
   }
 
-  componentDidMount() {
-    this.waitTimeUpdateTimer = setInterval(() =>
-    this.updatKegElapsedWaitTime(),
-    6000
-    );
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.waitTimeUpdateTimer);
-  }
-
-  updateKegElapsedWaitTime = () => {
-    const { dispatch } = this.props;
-    Object.values(this.props.masterKegList).forEach(keg => {
-      const newFormattedWaitTime = keg.timeOpen.fromNow(true);
-      const action = a.updateTime(keg.id, newFormattedWaitTime);
-      dispatch(action);
-    });
-  }
-
   handleClick = () => {
     if (this.state.selectedKeg != null) {
       this.setState({
